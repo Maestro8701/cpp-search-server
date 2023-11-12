@@ -1,12 +1,11 @@
 #include <algorithm>
-#include <cmath>
 #include <iostream>
-#include <map>
 #include <set>
 #include <string>
-#include <vector>
 #include <utility>
-
+#include <vector>
+#include <map>
+#include <cmath>
 
 using namespace std;
 
@@ -61,11 +60,10 @@ public:
     void AddDocument(int document_id, const string& document) {
         vector<string> words = SplitIntoWordsNoStop(document);
         double word_count = words.size();
+        double freq = 1. / word_count;
 
         for (const string& word : words) {
-            if (!IsStopWord(word)) {
-                word_to_document_freqs_[word][document_id] += 1. / word_count;
-            }
+                word_to_document_freqs_[word][document_id] += freq;
         }
 
         ++document_count_;
@@ -140,6 +138,10 @@ private:
         }
         return query;
     }
+    
+    double CalculateIDF(const string& word) const {
+        return log(double(document_count_) / word_to_document_freqs_.at(word).size());
+}
 
     vector<Document> FindAllDocuments(const Query& query) const {
         map<int, double> document_to_relevance;
@@ -149,7 +151,7 @@ private:
                 continue;
             }
 
-            double idf = log(double(document_count_) / word_to_document_freqs_.at(word).size());
+            double idf = CalculateIDF(word);
 
             for (const auto& [document_id, term_frequency] : word_to_document_freqs_.at(word)) {
                 if (query.minus_words.count(word) == 0) {
@@ -188,4 +190,3 @@ int main() {
     }
     return 0;
 }
-
