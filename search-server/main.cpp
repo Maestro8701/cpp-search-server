@@ -1,8 +1,11 @@
+//все исправил кроме переместить ValidQuery у меня следущие вопросы 1) Мне его потом нужно удалять и переписывать все места в которых он используется? 
+2) Можно уточнить что значит оптимально переделать? ..... Код обьемный для меня. Я пока недостаточно  его осознаю так как новичок, вопросы могут звучать глупо.
+ Мне нужно расшифровать точнее что значит. Оптимально немного переделать этот метод и разместить его в ParseQueryWord, чтобы исключить все проблемные слова на начальном этапе. 
+Если не переделывать то стоит его разместить в ParseQuery чтобы не дублироваться в коде
 #include <algorithm> 
 #include <cmath> 
 #include <iostream> 
 #include <map> 
-#include <numeric>
 #include <optional> 
 #include <set> 
 #include <stdexcept>  
@@ -112,11 +115,6 @@ public:
     } 
  
     const vector<string> words = SplitIntoWordsNoStop(document); 
-    for (const string& word : words) { 
-        if (!IsValidWord(word)) { 
-            throw invalid_argument("Document text contains invalid characters"); 
-        } 
-    } 
  
     const double inv_word_count = 1.0 / words.size(); 
     for (const string& word : words) { 
@@ -239,19 +237,26 @@ private:
     vector<string> SplitIntoWordsNoStop(const string& text) const { 
         vector<string> words; 
         for (const string& word : SplitIntoWords(text)) { 
-            if (!IsStopWord(word)) { 
-                words.push_back(word); 
+            if (!IsValidWord(word)) {             
+                throw invalid_argument("Document text contains invalid characters"); 
             } 
+                if (!IsStopWord(word) ) { 
+                    words.push_back(word); 
+                } 
         } 
         return words; 
     } 
   
-    int ComputeAverageRating(const vector<int>& ratings) {
-    if (ratings.empty()) {
-        return 0;
-    }
-    return accumulate(ratings.begin(), ratings.end(), 0) / static_cast<int>(ratings.size());
-}
+    static int ComputeAverageRating(const vector<int>& ratings) { 
+        if (ratings.empty()) { 
+            return 0; 
+        } 
+        int rating_sum = 0; 
+        for (const int rating : ratings) { 
+            rating_sum += rating; 
+        } 
+        return rating_sum / static_cast<int>(ratings.size()); 
+    } 
   
     struct QueryWord { 
         string data; 
@@ -290,6 +295,8 @@ private:
     } 
   
    bool ValidQuery(const Query& query) const { 
+     /*Оптимально немного переделать этот метод и разместить его в ParseQueryWord, чтобы исключить все проблемные слова на начальном этапе 
+Если не переделывать то стоит его разместить в ParseQuery чтобы не дублироваться в коде*/
     for (const string& word : query.plus_words) { 
         if ((!IsValidWord(word)) || (word.back() == '-')) { 
             return false; 
