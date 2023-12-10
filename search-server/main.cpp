@@ -5,7 +5,8 @@
 #include <algorithm> 
 #include <cmath> 
 #include <iostream> 
-#include <map> 
+#include <map>
+#include <numeric> 
 #include <optional> 
 #include <set> 
 #include <stdexcept>  
@@ -247,16 +248,15 @@ private:
         return words; 
     } 
   
-    static int ComputeAverageRating(const vector<int>& ratings) { 
-        if (ratings.empty()) { 
-            return 0; 
-        } 
-        int rating_sum = 0; 
-        for (const int rating : ratings) { 
-            rating_sum += rating; 
-        } 
-        return rating_sum / static_cast<int>(ratings.size()); 
-    } 
+    static int ComputeAverageRating(const std::vector<int>& ratings) {
+    if (ratings.empty()) {
+        return 0;
+    }
+
+    int rating_sum = std::accumulate(ratings.begin(), ratings.end(), 0);
+
+    return rating_sum / static_cast<int>(ratings.size());
+}
   
     struct QueryWord { 
         string data; 
@@ -304,7 +304,6 @@ private:
     } 
   
     for (const string& word : query.minus_words) { 
-        // Проверка на двойной минус в начале минус-слова 
         if (word.empty() || word[0] == '-' || (!IsValidWord(word)) || (word.back() == '-')) { 
             return false; 
         } 
