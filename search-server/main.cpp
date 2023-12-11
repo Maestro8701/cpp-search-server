@@ -1,7 +1,4 @@
-Все исправил кроме переместить ValidQuery у меня следущие вопросы 1) Мне его потом нужно удалять и переписывать все места в которых он используется? 
-2) Можно уточнить что значит оптимально переделать? ..... Код обьемный для меня. Я пока недостаточно  его осознаю так как новичок, вопросы могут звучать глупо.
- Мне нужно расшифровать точнее что значит. Оптимально немного переделать этот метод и разместить его в ParseQueryWord, чтобы исключить все проблемные слова на начальном этапе. 
-Если не переделывать то стоит его разместить в ParseQuery чтобы не дублироваться в коде
+1) Я не могу удалить моменты где используется ValidQuery так как тренажер потом тесты не проходит, не выбрасывается исключение , нужно чтобы выбрасывалось исключение в 2 методах
 #include <algorithm> 
 #include <cmath> 
 #include <iostream> 
@@ -88,7 +85,6 @@ enum class DocumentStatus {
   
 class SearchServer { 
 public: 
-    inline static constexpr int INVALID_DOCUMENT_ID = -1; 
   
    template <typename StringContainer> 
     explicit SearchServer(StringContainer stop_words) 
@@ -290,13 +286,12 @@ private:
                     query.plus_words.insert(query_word.data); 
                 } 
             } 
-        } 
+        }
+        ValidQuery(query);
         return query; 
     } 
   
    bool ValidQuery(const Query& query) const { 
-     /*Оптимально немного переделать этот метод и разместить его в ParseQueryWord, чтобы исключить все проблемные слова на начальном этапе 
-Если не переделывать то стоит его разместить в ParseQuery чтобы не дублироваться в коде*/
     for (const string& word : query.plus_words) { 
         if ((!IsValidWord(word)) || (word.back() == '-')) { 
             return false; 
