@@ -283,8 +283,7 @@ private:
                     query.plus_words.insert(query_word.data);  
                 }  
             }  
-        } 
-        ValidQuery(query); 
+        }
         return query;  
     }  
    
