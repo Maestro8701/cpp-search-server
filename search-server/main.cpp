@@ -287,22 +287,6 @@ private:
         return query;  
     }  
    
-   bool ValidQuery(const Query& query) const {  
-    for (const string& word : query.plus_words) {  
-        if ((!IsValidWord(word)) || (word.back() == '-')) {  
-            return false;  
-        }  
-    }  
-   
-    for (const string& word : query.minus_words) {  
-        if (word.empty() || word[0] == '-' || (!IsValidWord(word)) || (word.back() == '-')) {  
-            return false;  
-        }  
-    }  
-   
-    return true;  
-   }  
-   
     double ComputeWordInverseDocumentFreq(const string& word) const {  
         return log(GetDocumentCount() * 1.0 / word_to_document_freqs_.at(word).size());  
     }  
